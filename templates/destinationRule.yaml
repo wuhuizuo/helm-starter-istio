@@ -1,15 +1,14 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: {{ .Values.service | quote }}
+  name: {{ include "<CHARTNAME>.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ .Values.service | quote }}
-    app.kubernetes.io/part-of: {{ .Values.system | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-  namespace: {{ .Release.Namespace | quote }}
+    {{- include "<CHARTNAME>.labels" . | nindent 4 }}
 spec:
-  host: {{ (print .Values.service "." .Release.Namespace ".svc.cluster.local")  | quote }}
+  host: {{ include "<CHARTNAME>.fullname" . }}
+  {{- if .Chart.AppVersion }}
   subsets:
-    - name: {{ (print "v" .Values.version) | quote }}
+    - name: {{ (print "v" .Chart.AppVersion) | quote }}
       labels:
-        version: {{ .Values.version | quote }}
+        version: {{ .Chart.AppVersion | quote }}   
+  {{- end }}

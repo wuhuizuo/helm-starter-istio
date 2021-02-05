@@ -1,34 +1,58 @@
 # Default values for <CHARTNAME>.
 # This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
 
-# The overall system your service is a part of
-system: <CHARTNAME>
-# The name of your service
-service: <CHARTNAME>
-# The major version number for your service
-version: 1
+# The number of pod replicas to run for your service
+replicaCount: 1
 
 # Docker settings
 image:
   # The name of your docker container
   repository: XXXX
-  # Your docker container's tag
-  tag: YYYY
-  imagePullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+  pullPolicy: IfNotPresent
 
-# The number of pod replicas to run for your service
-replicaCount: 3
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
 
-# Port settings
-# Ports must be named <protocol>[-<suffix>] to work with Istio.
-# Valid protocols are grpc, http, http2, https, mongo, mysql, redis, tcp, tls, udp
-ports:
-  - name: grpc-svc
-    port: 8443
-    targetPort: 8443
-  - name: http-status
-    port: 8080
-    targetPort: 8080
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  # Port settings
+  # Ports must be named <protocol>[-<suffix>] to work with Istio.
+  # Valid protocols are grpc, http, http2, https, mongo, mysql, redis, tcp, tls, udp
+  ports:
+    - name: grpc-svc
+      port: 8443
+      targetPort: 8443
+      protocol: tcp
+    - name: http-status
+      port: 8080
+      targetPort: 8080
+      protocol: tcp
 
 # When enabled, configure the Istio ingress gateway to route outside traffic for the provided
 # host name to this service on the ports and protocols defined in the 'ports' section 
@@ -40,6 +64,51 @@ ingressGateway:
 # matchPrefix: 
 #   - "/foo"
 #   - "/bar"
+
+# Using the Istio Gateway, rather than Ingress, is recommended to make use of the full feature set that Istio offers, such as rich traffic management and security features.
+ingress:
+  enabled: false
+  annotations: {}
+    ## ingress using istio:
+    # kubernetes.io/ingress.class: istio
+
+    ## ingress using nginx:
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"   
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
 
 configMap:
   # Where the config map should be mounted inside your container's filesystem.
