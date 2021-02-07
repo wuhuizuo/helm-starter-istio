@@ -28,7 +28,7 @@ spec:
           {{- range .paths }}
           - path: {{ .path }}
             pathType: Prefix            
-            {{- with .Values.service.ports[0] }}
+            {{- with (index .Values.service.ports 0) }}
             backend:
               service:
                 name: {{ .name }}

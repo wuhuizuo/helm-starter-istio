@@ -13,14 +13,14 @@ spec:
     {{- if .Values.ingressGateway.enabled }}
     - {{ .Values.ingressGateway.host | quote }}
     {{- else }}
-    - {{ include "<CHARTNAME>.fullname" . }}{{ (print "." .Release.Namespace ".svc") | quote }}
+    - {{ print (include "<CHARTNAME>.fullname" .) "." .Release.Namespace ".svc" | quote }}
     {{- end }}
   http:
     - route:
       - destination:
-          host: {{ include "<CHARTNAME>.fullname" . }}{{ (print "." .Release.Namespace ".svc") | quote }}
+          host: {{ print (include "<CHARTNAME>.fullname" .) "." .Release.Namespace ".svc" | quote }}
           {{- if .Chart.AppVersion }}
-          subset: {{ (print "v" .Chart.AppVersion) | quote }}
+          subset: {{ print "v" (semver .Chart.AppVersion).Major | quote }}
           {{- end }}
 
       {{- if .Values.ingressGateway.enabled }}    

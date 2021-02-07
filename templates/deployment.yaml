@@ -5,9 +5,9 @@ metadata:
   labels:
     {{- include "<CHARTNAME>.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
+  {{- with .Values.autoscaling }}{{- if .enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
+  {{- end }}{{- end }}
   selector:
     matchLabels:
       {{- include "<CHARTNAME>.selectorLabels" . | nindent 6 }}
@@ -37,7 +37,7 @@ spec:
             {{- range .Values.service.ports }}
             - name: {{ .name | quote }}
               containerPort: {{ .targetPort }}
-              protocol: {{ .protocol }}
+              protocol: {{ .protocol | upper }}
             {{- end }}
           {{- if .Values.probes -}}
           {{- toYaml .Values.probes | nindent 10 -}}

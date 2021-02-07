@@ -38,8 +38,7 @@ helm.sh/chart: {{ include "<CHARTNAME>.chart" . }}
 {{ include "<CHARTNAME>.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{/* For istio */  }}    
-version: {{ .Chart.AppVersion | quote }} 
+version: {{ .Chart.AppVersion | quote }}{{/* For istio */}}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
@@ -50,8 +49,7 @@ Selector labels
 {{- define "<CHARTNAME>.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "<CHARTNAME>.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-{{/* For istio */  }}
-app: {{ .Release.Name }}
+app: {{ .Release.Name }}{{/* For istio */}}
 {{- end }}
 
 {{/*
