@@ -8,7 +8,7 @@ spec:
   host: {{ include "<CHARTNAME>.fullname" . }}
   {{- if .Chart.AppVersion }}
   subsets:
-    - name: {{ (print "v" .Chart.AppVersion) | quote }}
+    - name: {{ print "v" (semver .Chart.AppVersion).Major | quote }}
       labels:
         version: {{ .Chart.AppVersion | quote }}   
   {{- end }}

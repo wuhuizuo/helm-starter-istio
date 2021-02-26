@@ -45,11 +45,7 @@ service:
   # Ports must be named <protocol>[-<suffix>] to work with Istio.
   # Valid protocols are grpc, http, http2, https, mongo, mysql, redis, tcp, tls, udp
   ports:
-    - name: grpc-svc
-      port: 8443
-      targetPort: 8443
-      protocol: tcp
-    - name: http-status
+    - name: http-svc
       port: 8080
       targetPort: 8080
       protocol: tcp
